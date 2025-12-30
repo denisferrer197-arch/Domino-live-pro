@@ -1,38 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 function App() {
   const [puntosA, setPuntosA] = useState(0);
   const [puntosB, setPuntosB] = useState(0);
   const [entradaA, setEntradaA] = useState('');
   const [entradaB, setEntradaB] = useState('');
+  
   const [vistaActual, setVistaActual] = useState('MESAS');
   const [nombreTorneo, setNombreTorneo] = useState('Torneo de Dominó Live');
-  
-  // Estados de Ajustes y Equipos
-  const [equipos, setEquipos] = useState([]);
-  const [nuevoEquipo, setNuevoEquipo] = useState('');
-  const [emparejamientos, setEmparejamientos] = useState([]);
+  const [metaPuntos, setMetaPuntos] = useState(100);
+  const [jugadores, setJugadores] = useState([]);
+  const [nuevoJugador, setNuevoJugador] = useState('');
 
-  // Función para mezclar y crear enfrentamientos aleatorios
-  const generarEnfrentamientos = (listaEquipos) => {
-    if (listaEquipos.length < 2) return [];
-    let mezclados = [...listaEquipos].sort(() => Math.random() - 0.5);
-    let grupos = [];
-    for (let i = 0; i < mezclados.length; i += 2) {
-      if (mezclados[i + 1]) {
-        grupos.push({
-          mesa: Math.floor(i/2) + 1,
-          equipo1: mezclados[i],
-          equipo2: mezclados[i+1]
-        });
+  const sumarPuntos = (equipo) => {
+    const valor = parseInt(equipo === 'A' ? entradaA : entradaB);
+    if (!isNaN(valor)) {
+      if (equipo === 'A') {
+        setPuntosA(puntosA + valor);
+        setEntradaA('');
+      } else {
+        setPuntosB(puntosB + valor);
+        setEntradaB('');
       }
     }
-    return grupos;
   };
-
-  useEffect(() => {
-    setEmparejamientos(generarEnfrentamientos(equipos));
-  }, [equipos]);
 
   const navButtonStyle = (vista) => ({
     backgroundColor: vistaActual === vista ? '#ffa500' : 'transparent',
@@ -42,7 +33,6 @@ function App() {
     borderRadius: '12px',
     cursor: 'pointer',
     fontSize: '12px',
-    fontWeight: 'bold',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -65,7 +55,7 @@ function App() {
   return (
     <div style={{ textAlign: 'center', backgroundColor: '#0a0b0d', minHeight: '100vh', color: 'white', fontFamily: 'sans-serif' }}>
       <header style={{ backgroundColor: '#161b22', padding: '20px 0', borderBottom: '1px solid #30363d' }}>
-        <h1 style={{ margin: '0 0 20px 0', color: '#FFD700', fontSize: '20px' }}>{nombreTorneo.toUpperCase()}</h1>
+        <h1 style={{ margin: '0 0 20px 0', color: '#FFD700', fontSize: '22px' }}>{nombreTorneo.toUpperCase()}</h1>
         <nav style={{ display: 'flex', justifyContent: 'space-around', maxWidth: '600px', margin: '0 auto' }}>
           <button onClick={() => setVistaActual('MESAS')} style={navButtonStyle('MESAS')}><span>▶️</span> MESAS</button>
           <button onClick={() => setVistaActual('RANKING')} style={navButtonStyle('RANKING')}><span>🏆</span> RANKING</button>
@@ -75,29 +65,23 @@ function App() {
       </header>
 
       <main style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-        
-        {/* VISTA EQUIPOS: RIVALES POR EQUIPO */}
-        {vistaActual === 'EQUIPOS' && (
-          <div>
-            <h2 style={{fontSize: '18px', color: '#ffa500'}}>⚔️ ENFRENTAMIENTOS POR EQUIPOS</h2>
-            {equipos.length < 2 ? (
-              <p style={{color: '#8b949e'}}>Registra al menos 2 equipos en Ajustes para generar las mesas.</p>
-            ) : (
-              emparejamientos.map((m, i) => (
-                <div key={i} style={{backgroundColor: '#161b22', padding: '15px', borderRadius: '12px', border: '1px solid #30363d', marginBottom: '10px', textAlign: 'left'}}>
-                  <div style={{color: '#FFD700', fontWeight: 'bold', marginBottom: '10px'}}>MESA {m.mesa}</div>
-                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <div style={{color: '#4caf50', fontWeight: 'bold'}}>{m.equipo1}</div>
-                    <div style={{fontSize: '12px', color: '#8b949e'}}>VS</div>
-                    <div style={{color: '#f44336', fontWeight: 'bold'}}>{m.equipo2}</div>
-                  </div>
-                </div>
-              ))
-            )}
+        {vistaActual === 'MESAS' && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+            <div style={{ border: '2px solid #4caf50', padding: '15px', borderRadius: '15px', width: '48%', backgroundColor: '#161b22' }}>
+              <h2 style={{color: '#4caf50', fontSize: '16px'}}>PAREJA A</h2>
+              <div style={{ fontSize: '60px', margin: '10px 0' }}>{puntosA}</div>
+              <input type="number" value={entradaA} onChange={(e) => setEntradaA(e.target.value)} placeholder="Pts" style={{...inputStyle, width: '80%'}} />
+              <button onClick={() => sumarPuntos('A')} style={{ width: '90%', padding: '12px', backgroundColor: '#4caf50', color: 'white', border: 'none', borderRadius: '8px' }}>ANOTAR</button>
+            </div>
+            <div style={{ border: '2px solid #f44336', padding: '15px', borderRadius: '15px', width: '48%', backgroundColor: '#161b22' }}>
+              <h2 style={{color: '#f44336', fontSize: '16px'}}>PAREJA B</h2>
+              <div style={{ fontSize: '60px', margin: '10px 0' }}>{puntosB}</div>
+              <input type="number" value={entradaB} onChange={(e) => setEntradaB(e.target.value)} placeholder="Pts" style={{...inputStyle, width: '80%'}} />
+              <button onClick={() => sumarPuntos('B')} style={{ width: '90%', padding: '12px', backgroundColor: '#f44336', color: 'white', border: 'none', borderRadius: '8px' }}>ANOTAR</button>
+            </div>
           </div>
         )}
 
-        {/* VISTA AJUSTES: REGISTRO DE EQUIPOS */}
         {vistaActual === 'AJUSTES' && (
           <div style={{ textAlign: 'left', backgroundColor: '#161b22', padding: '25px', borderRadius: '15px' }}>
             <h2 style={{ fontSize: '18px', marginBottom: '20px' }}>⚙️ AJUSTES GENERALES</h2>
@@ -105,30 +89,46 @@ function App() {
             <label style={{ color: '#8b949e', fontSize: '12px', fontWeight: 'bold' }}>NOMBRE DEL TORNEO</label>
             <input type="text" value={nombreTorneo} onChange={(e) => setNombreTorneo(e.target.value)} style={inputStyle} />
 
-            <div style={{ marginTop: '10px', padding: '15px', border: '1px solid #ffa500', borderRadius: '10px', backgroundColor: '#0d1117' }}>
-              <label style={{ color: '#ffa500', fontSize: '12px', fontWeight: 'bold' }}>📝 REGISTRO DE EQUIPOS</label>
-              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                <input type="text" value={nuevoEquipo} onChange={(e) => setNuevoEquipo(e.target.value)} placeholder="Nombre del Equipo" style={{...inputStyle, marginBottom: 0}} />
-                <button onClick={() => {if(nuevoEquipo){setEquipos([...equipos, nuevoEquipo]); setNuevoEquipo('');}}} style={{ padding: '0 15px', backgroundColor: '#4caf50', border: 'none', borderRadius: '8px', color: 'white' }}>+</button>
+            <label style={{ color: '#8b949e', fontSize: '12px', fontWeight: 'bold' }}>CÓDIGO DE ACCESO (Público)</label>
+            <input type="text" placeholder="DEJAR VACÍO PARA ACCESO LIBRE" style={{...inputStyle, border: '1px solid #ffa500'}} />
+
+            <div style={{ display: 'flex', gap: '20px' }}>
+              <div style={{ flex: 1 }}>
+                <label style={{ color: '#8b949e', fontSize: '12px', fontWeight: 'bold' }}>TOTAL RONDAS</label>
+                <input type="number" defaultValue="2" style={inputStyle} />
               </div>
-              <div style={{ marginTop: '10px', maxHeight: '120px', overflowY: 'auto' }}>
-                {equipos.map((eq, i) => (
+              <div style={{ flex: 1 }}>
+                <label style={{ color: '#8b949e', fontSize: '12px', fontWeight: 'bold' }}>TIEMPO (MIN)</label>
+                <input type="number" defaultValue="2" style={inputStyle} />
+              </div>
+            </div>
+
+            <label style={{ color: '#8b949e', fontSize: '12px', fontWeight: 'bold' }}>META DE PUNTOS (Para ganar)</label>
+            <input type="number" value={metaPuntos} onChange={(e) => setMetaPuntos(e.target.value)} style={inputStyle} />
+
+            <label style={{ color: '#8b949e', fontSize: '12px', fontWeight: 'bold' }}>MÉTODO EMPAREJAMIENTO</label>
+            <select style={inputStyle}><option>Automático (Aleatorio)</option></select>
+
+            {/* SECCIÓN REGISTRO DE JUGADORES */}
+            <div style={{ marginTop: '20px', padding: '15px', border: '1px solid #30363d', borderRadius: '10px', backgroundColor: '#0d1117' }}>
+              <label style={{ color: '#ffa500', fontSize: '12px', fontWeight: 'bold' }}>📝 REGISTRO DE JUGADORES</label>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                <input type="text" value={nuevoJugador} onChange={(e) => setNuevoJugador(e.target.value)} placeholder="Nombre" style={{...inputStyle, marginBottom: 0}} />
+                <button onClick={() => {if(nuevoJugador){setJugadores([...jugadores, nuevoJugador]); setNuevoJugador('');}}} style={{ padding: '0 15px', backgroundColor: '#4caf50', border: 'none', borderRadius: '8px', color: 'white' }}>+</button>
+              </div>
+              <div style={{ marginTop: '10px', maxHeight: '100px', overflowY: 'auto' }}>
+                {jugadores.map((j, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid #30363d', fontSize: '14px' }}>
-                    <span>{i+1}. {eq}</span>
-                    <button onClick={() => setEquipos(equipos.filter((_, idx) => idx !== i))} style={{ background: 'none', border: 'none', color: '#f44336' }}>✖</button>
+                    <span>{i+1}. {j}</span>
+                    <button onClick={() => setJugadores(jugadores.filter((_, idx) => idx !== i))} style={{ background: 'none', border: 'none', color: '#f44336' }}>✖</button>
                   </div>
                 ))}
               </div>
             </div>
 
-            <label style={{ color: '#8b949e', fontSize: '12px', fontWeight: 'bold', marginTop: '20px', display: 'block' }}>META DE PUNTOS</label>
-            <input type="number" value={metaPuntos} onChange={(e) => setMetaPuntos(e.target.value)} style={inputStyle} />
-
-            <button onClick={() => setVistaActual('MESAS')} style={{ width: '100%', padding: '15px', backgroundColor: '#ffa500', border: 'none', borderRadius: '8px', fontWeight: 'bold', color: 'black', marginTop: '10px' }}>GUARDAR Y VOLVER</button>
+            <button onClick={() => setVistaActual('MESAS')} style={{ width: '100%', padding: '15px', backgroundColor: '#ffa500', border: 'none', borderRadius: '8px', fontWeight: 'bold', marginTop: '20px' }}>GUARDAR Y VOLVER</button>
           </div>
         )}
-
-        {vistaActual === 'MESAS' && <h2 style={{marginTop: '50px'}}>Mesa de juego lista</h2>}
       </main>
     </div>
   );
