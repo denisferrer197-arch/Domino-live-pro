@@ -6,10 +6,10 @@
     <title>Domino Pro - Live</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-
+</head>
+<body>
+    <div id="raiz">Cargando torneo...</div>
     <script>
-        // CONFIGURACIÓN DE TU FIREBASE
-        // Reemplaza estos datos con los de tu consola de Firebase si es necesario
         const firebaseConfig = {
             apiKey: "TU_API_KEY",
             authDomain: "domino-live-pro.firebaseapp.com",
@@ -19,27 +19,16 @@
             messagingSenderId: "TU_SENDER_ID",
             appId: "TU_APP_ID"
         };
-
-        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Función para actualizar puntos en tiempo real
         function escucharCambios() {
-            const refTorneo = database.ref('torneo/mesas');
-            refTorneo.on('value', (snapshot) => {
+            database.ref('torneo/mesas').on('value', (snapshot) => {
                 const datos = snapshot.val();
-                if (datos) {
-                    console.log("Datos recibidos de la nube:", datos);
-                    // Aquí el sistema actualizará automáticamente María, Ana, etc.
-                }
+                if (datos) { console.log("Datos en vivo:", datos); }
             });
         }
-
         window.onload = escucharCambios;
     </script>
-</head>
-<body>
-    <div id="raiz"></div>
-    </body>
+</body>
 </html>
