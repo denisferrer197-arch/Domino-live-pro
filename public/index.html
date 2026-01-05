@@ -3,32 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Domino Pro - Live</title>
+    <title>Dominó Pro - Live</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 </head>
 <body>
-    <div id="raiz">Cargando torneo...</div>
+    <div id="raiz">¡Sistema Conectado!</div>
     <script>
         const firebaseConfig = {
-            apiKey: "TU_API_KEY",
-            authDomain: "domino-live-pro.firebaseapp.com",
-            databaseURL: "https://domino-live-pro-default-rtdb.firebaseio.com",
-            projectId: "domino-live-pro",
-            storageBucket: "domino-live-pro.appspot.com",
-            messagingSenderId: "TU_SENDER_ID",
-            appId: "TU_APP_ID"
+            apiKey: "AIzaSyBLIRrLTV6XUGYtNBL8PdAPteY9pCJN3IE",
+            authDomain: "domino-live-a481b.firebaseapp.com",
+            databaseURL: "https://domino-live-a481b-default-rtdb.firebaseio.com",
+            projectId: "domino-live-a481b",
+            storageBucket: "domino-live-a481b.appspot.com",
+            messagingSenderId: "798295736110",
+            appId: "1:798295736110:web:24e2476e9477a6deff04bf"
         };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        function escucharCambios() {
-            database.ref('torneo/mesas').on('value', (snapshot) => {
-                const datos = snapshot.val();
-                if (datos) { console.log("Datos en vivo:", datos); }
-            });
-        }
-        window.onload = escucharCambios;
+        database.ref('torneo/mesas').on('value', (snapshot) => {
+            const datos = snapshot.val();
+            if (datos) { console.log("Sincronizado con éxito"); }
+        });
     </script>
 </body>
 </html>
