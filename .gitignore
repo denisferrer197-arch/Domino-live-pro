@@ -4,3 +4,5 @@ git commit -m "Versión final DominoLive"
 git branch -M main
 git remote add origin TU_URL_DE_GITHUB
 git push -u origin main
+.vercel
+.env*.local
