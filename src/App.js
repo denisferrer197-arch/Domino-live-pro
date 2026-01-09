@@ -1,30 +1,59 @@
 import React, { useState } from 'react';
-import './App.css';
 
 function App() {
   const [puntosA, setPuntosA] = useState(0);
   const [puntosB, setPuntosB] = useState(0);
+  const [historial, setHistorial] = useState([]);
+
+  const anotarPuntos = (equipo) => {
+    const valor = parseInt(prompt("¿Cuántos puntos anotaron?"), 10);
+    if (!isNaN(valor)) {
+      if (equipo === 'A') {
+        setPuntosA(puntosA + valor);
+        setHistorial([...historial, { a: valor, b: '-' }]);
+      } else {
+        setPuntosB(puntosB + valor);
+        setHistorial([...historial, { a: '-', b: valor }]);
+      }
+    }
+  };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', backgroundColor: '#001529', color: 'white', textAlign: 'center' }}>
-      {/* LADO EQUIPO A */}
-      <div style={{ flex: 1, borderRight: '2px solid white', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <h2>EQUIPO A</h2>
-        <h1 style={{ fontSize: '120px', margin: '20px 0' }}>{puntosA}</h1>
-        <div>
-          <button onClick={() => setPuntosA(puntosA + 1)} style={{ padding: '20px', fontSize: '20px', margin: '5px' }}>+1</button>
-          <button onClick={() => setPuntosA(puntosA > 0 ? puntosA - 1 : 0)} style={{ padding: '20px', fontSize: '20px', margin: '5px' }}>-1</button>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#001529', color: 'white', fontFamily: 'sans-serif' }}>
+      {/* MARCADOR GIGANTE DIVIDIDO */}
+      <div style={{ display: 'flex', flex: 1, borderBottom: '2px solid #444' }}>
+        <div style={{ flex: 1, borderRight: '1px solid #444', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} onClick={() => anotarPuntos('A')}>
+          <h2 style={{ color: '#1890ff' }}>EQUIPO A</h2>
+          <h1 style={{ fontSize: '100px', margin: 0 }}>{puntosA}</h1>
+          <p>Toca para anotar</p>
+        </div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} onClick={() => anotarPuntos('B')}>
+          <h2 style={{ color: '#f5222d' }}>EQUIPO B</h2>
+          <h1 style={{ fontSize: '100px', margin: 0 }}>{puntosB}</h1>
+          <p>Toca para anotar</p>
         </div>
       </div>
 
-      {/* LADO EQUIPO B */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <h2>EQUIPO B</h2>
-        <h1 style={{ fontSize: '120px', margin: '20px 0' }}>{puntosB}</h1>
-        <div>
-          <button onClick={() => setPuntosB(puntosB + 1)} style={{ padding: '20px', fontSize: '20px', margin: '5px' }}>+1</button>
-          <button onClick={() => setPuntosB(puntosB > 0 ? puntosB - 1 : 0)} style={{ padding: '20px', fontSize: '20px', margin: '5px' }}>-1</button>
-        </div>
+      {/* TABLA DE REGISTRO */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '10px' }}>
+        <table style={{ width: '100%', textAlign: 'center', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr style={{ borderBottom: '2px solid white' }}>
+              <th>Ronda</th>
+              <th>A</th>
+              <th>B</th>
+            </tr>
+          </thead>
+          <tbody>
+            {historial.map((ronda, i) => (
+              <tr key={i} style={{ borderBottom: '1px solid #333' }}>
+                <td>{i + 1}</td>
+                <td style={{ color: '#1890ff' }}>{ronda.a}</td>
+                <td style={{ color: '#f5222d' }}>{ronda.b}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
